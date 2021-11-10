@@ -13,19 +13,21 @@ public class DoubleInterval {
     private static final double accur = 100;
      
      public static double meth(Function function, double a, double b, double c, double d, double accur) {
-        while(a < b) {
+       while(a < b || c < d) {
             double l = (b - a)/100;
             double m = (d - c)/100;
             double sumS = 0;
+            double r = a;
             
             for(int i=0; i<accur; i++) {  
-                for(int j=i; j<accur; j++) {
-                    a += l;
-                    c += m;
-                    double S = l*function.f(a - l/2 , c - m/2);
+                 r += l;
+                 double t =c;
+                for(int j=0; j<accur; j++) {
+                    t += m;
+                    double S = l*m*function.f(r - l/2 , t - m/2);
                     sumS += S;
-             } return sumS;
-           }
+             } 
+           }return sumS;
         } return 0;
      }
 
@@ -36,52 +38,53 @@ public class DoubleInterval {
            return (x*x +x)*(2*y+1);
         }
     }
-      private static class Exp{
-         double e(double x, double y) {
-             return Math.exp(-x*y);
-         }
-     }
-      private static class Sin{
-         double s(double x, double y) {
+      
+      public  static double s(double x, double y) {
              return Math.sin(x*y)*x*y;
          }
-     }
+      
+      public static double exp(double x, double y) {
+             return Math.exp(-x*y);
+         }
+     
      
      public static void main(String[] args) {
        Function f1 = new Function() {
+        @Override
         public double f(double x, double y) {
                 return x*y;
             }
         };
         System.out.println("");
-        System.out.println("Реализация интерфеса с помощью вложенного класса: ");
+        System.out.println("Реализация интерфеса с помощью анонимного класса: ");
         System.out.println(meth(f1, 1, 3, 1, 3, accur));
         
-        Function f2 = new Function() {
-        public double f(double x, double y) {
-                return x*x+y*y*y;
-            }
-        };
+        
+        Function f2 = (double x, double y) -> x*x+y*y*y;
         System.out.println("");
-        System.out.println("Реализация интерфейса с помощью вложенного класса: ");
+        System.out.println("Реализация интерфейса с помощью лямбда выражения: ");
         System.out.println(meth(f2, 1, 3, 1, 2, accur));
+       
         
         Function f3 = new Duble();
         System.out.println("");
-        System.out.println("Реализация интерфеса с помощью анонимного класса: ");
+        System.out.println("Реализация интерфеса с помощью вложенного класса: ");
         System.out.println(meth(f3, 3, 4, 7, 10, accur));
         
-        Exp e = new Exp();
-        Function f4 = e::e; 
+        
+        
+        Function f4 = DoubleInterval::exp;  
         System.out.println("");
-        System.out.println("Реализация интерфеса с помощью ссылки на метод экземпляра: ");
+        System.out.println("Реализация интерфеса с помощью ссылки на на статический метод: ");
         System.out.println(meth(f4, 0.01, 2, 0.5, 4, accur));
         
-        Sin s = new Sin();
-        Function f5 = s::s; 
+        
+       
+        Function f5 = DoubleInterval::s; 
         System.out.println("");
         System.out.println("Реализация интерфеса с помощью ссылки на метод экземпляра: ");
         System.out.println(meth(f5, 0, 1, 0, 1, accur));
+        
        
         
      }
